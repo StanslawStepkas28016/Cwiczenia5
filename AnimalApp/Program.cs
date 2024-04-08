@@ -1,3 +1,7 @@
+using AnimalApp;
+using AnimalApp.Animals;
+using AnimalApp.Visits;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,29 +20,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Minimal API Approach.
+List<Animal> animals =
+[
+    new Animal(1, "Max", "Dog", 3.5, "Black"),
+    new Animal(2, "Alice", "Cat", 1.5, "Gray"),
+    new Animal(3, "Bob", "Snake", 0.5, "Red")
+];
 
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+List<Visit> visits =
+[
+    new Visit(1, 1, new DateTime(2024, 2, 28), "Annual checkup", 200),
+    new Visit(2, 2, new DateTime(2024, 3, 15), "Teeth cleaning", 500)
+];
+
+AnimalEndpoints.Register(app, animals);
+VisitEndpoints.Register(app, visits);
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

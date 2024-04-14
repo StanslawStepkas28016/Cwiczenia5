@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 namespace AnimalApp.Animals;
 
 public static class AnimalEndpoints
@@ -12,26 +14,29 @@ public static class AnimalEndpoints
             animals.FirstOrDefault(a => a.Id == id) is { } animal ? Results.Ok(animal) : Results.NotFound());
 
         // Dodawanie zwierzęcia.
-        app.MapPost("/animals", (Animal animal) =>
+        app.MapPut("/animals/add", ([FromBody] Animal animal) =>
         {
             animals.Add(animal);
             return Results.Created($"/animals/{animal.Id}", animal);
         });
 
-        // Edycja zwierzęcia.
-        app.MapPost("/animals", (Animal oldAnimal, Animal newAnimal) =>
+        // Edycja zwierzęcia, z użyciem DTO (Data Transfer Object).
+        app.MapPost("/animals/modify", ([FromBody] AnimalUpdateDTO updateDto) =>
         {
-            // oldAnimal.Id = newAnimal.Id;
-            oldAnimal.Name = newAnimal.Name;
-            oldAnimal.Category = newAnimal.Category;
-            oldAnimal.Mass = newAnimal.Mass;
-            oldAnimal.Color = newAnimal.Color;
+            var oldAnimal = animals.FirstOrDefault(a => a.Id == updateDto.OldAnimal.Id);
+            if (oldAnimal == null)
+                return Results.NotFound();
 
-            return Results.Ok();
+            oldAnimal.Name = updateDto.NewAnimal.Name;
+            oldAnimal.Category = updateDto.NewAnimal.Category;
+            oldAnimal.Mass = updateDto.NewAnimal.Mass;
+            oldAnimal.Color = updateDto.NewAnimal.Color;
+
+            return Results.Ok(oldAnimal);
         });
 
         // Usuwanie zwierzęcia.
-        app.MapPost("/animals", (Animal animal) =>
+        app.MapDelete("/animals/delete", ([FromBody] Animal animal) =>
         {
             animals.Remove(animal);
             return Results.Ok();

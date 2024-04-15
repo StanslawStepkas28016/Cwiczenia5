@@ -1,6 +1,6 @@
 namespace AnimalApp.Animals;
 
-public class AnimalUpdateDTO
+public record AnimalUpdateDTO
 {
     public Animal OldAnimal { get; set; }
     public Animal NewAnimal { get; set; }

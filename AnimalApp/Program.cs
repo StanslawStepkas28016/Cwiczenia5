@@ -1,4 +1,3 @@
-using AnimalApp;
 using AnimalApp.Animals;
 using AnimalApp.Visits;
 
@@ -8,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -19,6 +19,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 
 // Minimal API Approach.
 List<Animal> animals =
@@ -36,5 +37,7 @@ List<Visit> visits =
 
 AnimalEndpoints.Register(app, animals);
 VisitEndpoints.Register(app, visits);
+
+app.MapControllers();
 
 app.Run();
